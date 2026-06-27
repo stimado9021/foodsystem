@@ -3,856 +3,534 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LuisCount - Sistema de Ventas</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --success-color: #27ae60;
-            --danger-color: #e74c3c;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px 0;
-        }
-        
-        .main-container {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            margin-bottom: 20px;
-        }
-        
-        .card-header {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: white;
-            border-radius: 15px 15px 0 0 !important;
-            padding: 20px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
-            border: none;
-        }
-        
-        .btn-success {
-            background: linear-gradient(135deg, var(--success-color) 0%, #229954 100%);
-            border: none;
-        }
-        
-        .btn-danger {
-            background: linear-gradient(135deg, var(--danger-color) 0%, #c0392b 100%);
-            border: none;
-        }
-        
-        .btn-warning {
-            background: linear-gradient(135deg, #f39c12 0%, #e67e22 100%);
-            border: none;
-        }
-        
-        .logo {
-            text-align: center;
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-            margin-bottom: 30px;
-        }
-        
-        .saldo-badge {
-            font-size: 1.2rem;
-            padding: 10px 20px;
-        }
-        
-        .producto-item {
-            background: #f8f9fa;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .tab-content {
-            padding: 20px 0;
-        }
-        
-        .nav-pills .nav-link {
-            color: var(--primary-color);
-            font-size: 0.9rem;
-        }
-        
-        .nav-pills .nav-link.active {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, #2980b9 100%);
-        }
-        
-        .historial-item {
-            border-left: 4px solid;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-            background: #f8f9fa;
-        }
-        
-        .historial-venta {
-            border-left-color: var(--danger-color);
-        }
-        
-        .historial-pago {
-            border-left-color: var(--success-color);
-        }
-
-        @media (max-width: 576px) {
-            .nav-pills .nav-link {
-                font-size: 0.8rem;
-                padding: 8px 5px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-        }
-    </style>
+    <title>CobroKits</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container main-container">
-        <div class="logo">
-            <i class="bi bi-cart-check-fill"></i> LuisCount
-        </div>
-
-        <!-- Navegación -->
-        <div class="card">
-            <div class="card-body">
-                <ul class="nav nav-pills nav-fill mb-3" id="mainTabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="venta-tab" data-bs-toggle="pill" data-bs-target="#venta" type="button">
-                            <i class="bi bi-cart-plus"></i> Venta
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pago-tab" data-bs-toggle="pill" data-bs-target="#pago" type="button">
-                            <i class="bi bi-cash-coin"></i> Pago
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="clientes-tab" data-bs-toggle="pill" data-bs-target="#clientes" type="button">
-                            <i class="bi bi-people"></i> Clientes
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="productos-tab" data-bs-toggle="pill" data-bs-target="#productos" type="button">
-                            <i class="bi bi-box-seam"></i> Productos
-                        </button>
-                    </li>
-                </ul>
-
-                <div class="tab-content" id="mainTabsContent">
-                    <!-- TAB VENTA -->
-                    <div class="tab-pane fade show active" id="venta" role="tabpanel">
-                        <h5 class="mb-3">Registrar Venta</h5>
-                        
-                        <!-- Buscar Cliente -->
-                        <div class="mb-3">
-                            <label class="form-label">Cédula del Cliente</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="cedulaVenta" placeholder="Ingrese cédula">
-                                <button class="btn btn-primary" onclick="buscarClienteVenta()">
-                                    <i class="bi bi-search"></i> Buscar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="clienteVentaInfo" style="display:none;">
-                            <div class="alert alert-info">
-                                <h6 id="clienteVentaNombre"></h6>
-                                <p class="mb-0"><strong>Dirección:</strong> <span id="clienteVentaDireccion"></span></p>
-                                <p class="mb-0"><strong>Saldo Actual:</strong> 
-                                    <span class="badge bg-danger saldo-badge" id="clienteVentaSaldo">$0</span>
-                                </p>
-                            </div>
-
-                            <!-- Selección de Productos -->
-                            <div class="mb-3">
-                                <label class="form-label">Seleccionar Producto</label>
-                                <select class="form-select" id="productoSelect">
-                                    <option value="">-- Seleccione un producto --</option>
-                                </select>
-                            </div>
-
-                            <div class="row mb-3">
-                                <div class="col-6">
-                                    <label class="form-label">Cantidad</label>
-                                    <input type="number" class="form-control" id="cantidadProducto" value="1" min="1">
-                                </div>
-                                <div class="col-6">
-                                    <label class="form-label">&nbsp;</label>
-                                    <button class="btn btn-success w-100" onclick="agregarProducto()">
-                                        <i class="bi bi-plus-circle"></i> Agregar
-                                    </button>
-                                </div>
-                            </div>
-
-                            <!-- Lista de Productos Agregados -->
-                            <div id="listaProductosVenta"></div>
-
-                            <div class="alert alert-success" id="totalVenta" style="display:none;">
-                                <h5 class="mb-0">Total: $<span id="totalVentaMonto">0</span></h5>
-                                <small>Nuevo Saldo: $<span id="nuevoSaldoVenta">0</span></small>
-                            </div>
-
-                            <button class="btn btn-primary w-100" id="btnGuardarVenta" onclick="guardarVenta()" style="display:none;">
-                                <i class="bi bi-check-circle"></i> Guardar Venta
-                            </button>
-                        </div>
-
-                        <!-- Mensaje si no se encuentra cliente -->
-                        <div id="clienteNoEncontrado" style="display:none;">
-                            <div class="alert alert-warning">
-                                <i class="bi bi-exclamation-triangle"></i> Cliente no encontrado. 
-                                Por favor regístrelo en la pestaña <strong>Clientes</strong>.
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- TAB PAGO -->
-                    <div class="tab-pane fade" id="pago" role="tabpanel">
-                        <h5 class="mb-3">Registrar Pago</h5>
-                        
-                        <div class="mb-3">
-                            <label class="form-label">Cédula del Cliente</label>
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="cedulaPago" placeholder="Ingrese cédula">
-                                <button class="btn btn-primary" onclick="buscarClientePago()">
-                                    <i class="bi bi-search"></i> Buscar
-                                </button>
-                            </div>
-                        </div>
-
-                        <div id="clientePagoInfo" style="display:none;">
-                            <div class="alert alert-info">
-                                <h6 id="clientePagoNombre"></h6>
-                                <p class="mb-0"><strong>Saldo Actual:</strong> 
-                                    <span class="badge bg-danger saldo-badge" id="clientePagoSaldo">$0</span>
-                                </p>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Monto del Pago</label>
-                                <input type="number" class="form-control" id="montoPago" placeholder="0.00" step="0.01" min="0">
-                            </div>
-
-                            <div class="alert alert-success" id="resultadoPago" style="display:none;">
-                                <p class="mb-0"><strong>Nuevo Saldo:</strong> $<span id="nuevoSaldoPago">0</span></p>
-                            </div>
-
-                            <button class="btn btn-success w-100" onclick="guardarPago()">
-                                <i class="bi bi-cash"></i> Registrar Pago
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- TAB CLIENTES -->
-                    <div class="tab-pane fade" id="clientes" role="tabpanel">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Gestión de Clientes</h5>
-                            <button class="btn btn-success" onclick="mostrarFormularioCliente()">
-                                <i class="bi bi-person-plus"></i> Nuevo
-                            </button>
-                        </div>
-
-                        <!-- Formulario Nuevo Cliente -->
-                        <div id="formNuevoCliente" style="display:none;" class="card mb-3">
-                            <div class="card-body">
-                                <h6 class="mb-3">
-                                    <i class="bi bi-person-plus-fill"></i> Registrar Nuevo Cliente
-                                </h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Cédula *</label>
-                                    <input type="text" class="form-control" id="cedulaNuevoCliente" placeholder="Ej: 1234567890">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Nombres Completos *</label>
-                                    <input type="text" class="form-control" id="nombresNuevoCliente" placeholder="Ej: Juan Pérez">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Dirección *</label>
-                                    <textarea class="form-control" id="direccionNuevoCliente" rows="2" placeholder="Ej: Calle 123 #45-67"></textarea>
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-success" onclick="crearNuevoCliente()">
-                                        <i class="bi bi-save"></i> Guardar Cliente
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="ocultarFormularioCliente()">
-                                        <i class="bi bi-x-circle"></i> Cancelar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <button class="btn btn-primary w-100" onclick="cargarClientes()">
-                                <i class="bi bi-arrow-clockwise"></i> Actualizar Lista
-                            </button>
-                        </div>
-                        <div id="listaClientes"></div>
-                    </div>
-
-                    <!-- TAB PRODUCTOS -->
-                    <div class="tab-pane fade" id="productos" role="tabpanel">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="mb-0">Gestión de Productos</h5>
-                            <button class="btn btn-success" onclick="mostrarFormularioProducto()">
-                                <i class="bi bi-plus-circle"></i> Nuevo
-                            </button>
-                        </div>
-
-                        <!-- Formulario Nuevo Producto -->
-                        <div id="formNuevoProducto" style="display:none;" class="card mb-3">
-                            <div class="card-body">
-                                <h6 class="mb-3">
-                                    <i class="bi bi-box-seam-fill"></i> Registrar Nuevo Producto
-                                </h6>
-                                <div class="mb-3">
-                                    <label class="form-label">Nombre del Producto *</label>
-                                    <input type="text" class="form-control" id="nombreNuevoProducto" placeholder="Ej: Arroz">
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label">Precio *</label>
-                                    <input type="number" class="form-control" id="precioNuevoProducto" placeholder="0.00" step="0.01" min="0">
-                                </div>
-                                <div class="d-grid gap-2">
-                                    <button class="btn btn-success" onclick="crearNuevoProducto()">
-                                        <i class="bi bi-save"></i> Guardar Producto
-                                    </button>
-                                    <button class="btn btn-secondary" onclick="ocultarFormularioProducto()">
-                                        <i class="bi bi-x-circle"></i> Cancelar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mb-3">
-                            <button class="btn btn-primary w-100" onclick="cargarProductosLista()">
-                                <i class="bi bi-arrow-clockwise"></i> Actualizar Lista
-                            </button>
-                        </div>
-                        <div id="listaProductos"></div>
-                    </div>
-                </div>
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon"><i class="bi bi-box2-heart"></i></div>
+            <div>
+                <strong>CobroKits</strong>
+                <span>Consignacion semanal</span>
             </div>
         </div>
-    </div>
 
-    <!-- Modal Historial -->
-    <div class="modal fade" id="modalHistorial" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Historial de Transacciones</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <h6>Ventas</h6>
-                    <div id="historialVentas"></div>
-                    <hr>
-                    <h6>Pagos</h6>
-                    <div id="historialPagos"></div>
-                </div>
+        <label class="small-label" for="sellerFilter">Vendedor activo</label>
+        <select id="sellerFilter" class="input" onchange="onSellerChange()"></select>
+
+        <nav class="nav">
+            <button class="nav-item active" data-view="inicio" onclick="showView('inicio')"><i class="bi bi-house"></i><span>Inicio</span></button>
+            <button class="nav-item" data-view="clientes" onclick="showView('clientes')"><i class="bi bi-people"></i><span>Clientes</span></button>
+            <button class="nav-item" data-view="ventas" onclick="showView('ventas')"><i class="bi bi-bag-plus"></i><span>Ventas</span></button>
+            <button class="nav-item" data-view="cobros" onclick="showView('cobros')"><i class="bi bi-cash-coin"></i><span>Cobros</span></button>
+            <button class="nav-item" data-view="stock" onclick="showView('stock')"><i class="bi bi-box-seam"></i><span>Stock</span></button>
+            <button class="nav-item" data-view="admin" onclick="showView('admin')"><i class="bi bi-speedometer2"></i><span>Admin</span></button>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div>
+                <p class="eyebrow">Sistema de inventario, credito y recaudo</p>
+                <h1 id="viewTitle">Inicio</h1>
             </div>
-        </div>
-    </div>
+            <button class="icon-button" title="Actualizar" onclick="refreshAll()"><i class="bi bi-arrow-clockwise"></i></button>
+        </header>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
+        <section id="inicio" class="view active">
+            <div class="metric-grid">
+                <article class="metric"><span>Cartera total</span><strong id="metricCartera">$0</strong></article>
+                <article class="metric"><span>Recaudo hoy</span><strong id="metricRecaudo">$0</strong></article>
+                <article class="metric"><span>Efectivo</span><strong id="metricEfectivo">$0</strong></article>
+                <article class="metric"><span>Nequi</span><strong id="metricNequi">$0</strong></article>
+                <article class="metric"><span>Produccion hoy</span><strong id="metricProduccion">$0</strong></article>
+                <article class="metric"><span>Inversion hoy</span><strong id="metricInversion">$0</strong></article>
+            </div>
+
+            <div class="split">
+                <section class="panel">
+                    <div class="panel-head">
+                        <h2>Clientes con saldo</h2>
+                        <button class="text-button" onclick="showView('cobros')">Cobrar</button>
+                    </div>
+                    <div id="homeBalances" class="list"></div>
+                </section>
+
+                <section class="panel">
+                    <div class="panel-head">
+                        <h2>Rendimiento por vendedor</h2>
+                        <span class="pill">Hoy</span>
+                    </div>
+                    <div id="sellerPerformance" class="list"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="clientes" class="view">
+            <div class="split">
+                <form class="panel form" onsubmit="createClient(event)">
+                    <h2>Nuevo cliente</h2>
+                    <label>Vendedor</label>
+                    <select id="clientSeller" class="input" required></select>
+                    <label>Nombre</label>
+                    <input id="clientName" class="input" required>
+                    <label>Direccion</label>
+                    <input id="clientAddress" class="input" required>
+                    <label>Telefono</label>
+                    <input id="clientPhone" class="input">
+                    <button class="primary-button"><i class="bi bi-person-plus"></i> Crear cliente</button>
+                </form>
+
+                <section class="panel">
+                    <div class="panel-head">
+                        <h2>Clientes</h2>
+                        <input id="clientSearch" class="input compact" placeholder="Buscar" oninput="renderClients()">
+                    </div>
+                    <div id="clientsList" class="list"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="ventas" class="view">
+            <div class="split">
+                <form class="panel form" onsubmit="registerVisit(event, 'venta')">
+                    <h2>Dejar producto</h2>
+                    <label>Cliente</label>
+                    <select id="saleClient" class="input" onchange="syncSelectedClient('sale')" required></select>
+                    <div id="saleBalance" class="balance-box">Saldo anterior: $0</div>
+                    <label>Producto</label>
+                    <select id="saleProduct" class="input"></select>
+                    <label>Cantidad</label>
+                    <div class="row">
+                        <input id="saleQty" class="input" type="number" min="1" value="1">
+                        <button type="button" class="secondary-button" onclick="addSaleItem()"><i class="bi bi-plus-lg"></i></button>
+                    </div>
+                    <div id="saleItems" class="cart"></div>
+                    <button class="primary-button"><i class="bi bi-check2-circle"></i> Guardar venta</button>
+                </form>
+
+                <section class="panel">
+                    <h2>Calculo de la cuenta</h2>
+                    <div class="formula">
+                        <div><span>Saldo anterior</span><strong id="calcPrev">$0</strong></div>
+                        <div><span>Productos nuevos</span><strong id="calcNew">$0</strong></div>
+                        <div><span>Abono actual</span><strong id="calcPay">$0</strong></div>
+                        <div class="total"><span>Nuevo saldo</span><strong id="calcBalance">$0</strong></div>
+                    </div>
+                </section>
+            </div>
+        </section>
+
+        <section id="cobros" class="view">
+            <div class="split">
+                <form class="panel form" onsubmit="registerVisit(event, 'cobro')">
+                    <h2>Registrar cobro</h2>
+                    <label>Cliente</label>
+                    <select id="paymentClient" class="input" onchange="syncSelectedClient('payment')" required></select>
+                    <div id="paymentBalance" class="balance-box">Saldo actual: $0</div>
+                    <label>Abono</label>
+                    <input id="paymentAmount" class="input" type="number" min="0" step="100" required oninput="updatePaymentPreview()">
+                    <label>Metodo de pago</label>
+                    <select id="paymentMethod" class="input">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="nequi">Nequi</option>
+                    </select>
+                    <button class="primary-button"><i class="bi bi-cash-stack"></i> Guardar cobro</button>
+                </form>
+
+                <section class="panel">
+                    <h2>Clientes por cobrar</h2>
+                    <div id="collectList" class="list"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="stock" class="view">
+            <div class="split">
+                <form class="panel form" onsubmit="deliverStock(event)">
+                    <h2>Entregar inventario</h2>
+                    <label>Vendedor</label>
+                    <select id="stockSeller" class="input" required></select>
+                    <label>Producto</label>
+                    <select id="stockProduct" class="input" required></select>
+                    <label>Cantidad</label>
+                    <input id="stockQty" class="input" type="number" min="1" value="1" required>
+                    <button class="primary-button"><i class="bi bi-box-arrow-in-down"></i> Entregar stock</button>
+                </form>
+
+                <section class="panel">
+                    <h2>Stock del vendedor</h2>
+                    <div id="stockList" class="list"></div>
+                </section>
+            </div>
+        </section>
+
+        <section id="admin" class="view">
+            <div class="admin-grid">
+                <form class="panel form" onsubmit="createSeller(event)">
+                    <h2>Vendedor</h2>
+                    <label>Nombre</label>
+                    <input id="sellerName" class="input" required>
+                    <label>Telefono</label>
+                    <input id="sellerPhone" class="input">
+                    <button class="primary-button"><i class="bi bi-person-badge"></i> Crear vendedor</button>
+                </form>
+
+                <form class="panel form" onsubmit="createProduct(event)">
+                    <h2>Producto</h2>
+                    <label>Nombre</label>
+                    <input id="productName" class="input" required>
+                    <label>Costo de inversion</label>
+                    <input id="productCost" class="input" type="number" min="0" step="100" required>
+                    <label>Precio de venta</label>
+                    <input id="productPrice" class="input" type="number" min="0" step="100" required>
+                    <button class="primary-button"><i class="bi bi-plus-square"></i> Crear producto</button>
+                </form>
+
+                <section class="panel">
+                    <h2>Corte diario</h2>
+                    <div class="row">
+                        <select id="reportSeller" class="input"></select>
+                        <input id="reportDate" class="input" type="date">
+                    </div>
+                    <button class="secondary-button full" onclick="loadSellerReport()"><i class="bi bi-graph-up"></i> Calcular</button>
+                    <div id="sellerReport" class="report"></div>
+                </section>
+            </div>
+        </section>
+    </main>
+
+    <div id="toast" class="toast"></div>
+
     <script>
-        let clienteActualVenta = null;
-        let clienteActualPago = null;
-        let productosVenta = [];
-        let todosLosProductos = [];
+        const state = {
+            sellers: [],
+            clients: [],
+            products: [],
+            stock: [],
+            dashboard: null,
+            saleItems: []
+        };
 
-        // Cargar productos al iniciar
-        document.addEventListener('DOMContentLoaded', function() {
-            cargarProductos();
+        const money = value => '$' + Number(value || 0).toLocaleString('es-CO');
+        const api = async (action, options = {}) => {
+            const res = await fetch(`api.php?action=${action}`, options);
+            const data = await res.json();
+            if (!data.success) throw new Error(data.message || 'Error');
+            return data;
+        };
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('reportDate').valueAsDate = new Date();
+            try {
+                await api('bootstrap');
+                await refreshAll();
+            } catch (error) {
+                toast(error.message, true);
+            }
         });
 
-        async function cargarProductos() {
-            try {
-                const response = await fetch('api.php?action=listar_productos');
-                const data = await response.json();
-                
-                console.log('Respuesta de productos:', data); // Debug
-                
-                if (data.success && data.productos) {
-                    todosLosProductos = data.productos;
-                    const select = document.getElementById('productoSelect');
-                    select.innerHTML = '<option value="">-- Seleccione un producto --</option>';
-                    
-                    if (data.productos.length === 0) {
-                        select.innerHTML += '<option value="" disabled>No hay productos disponibles</option>';
-                        console.warn('No hay productos en la base de datos');
-                        return;
-                    }
-                    
-                    data.productos.forEach(prod => {
-                        select.innerHTML += `<option value="${prod.id}" data-precio="${prod.precio}">${prod.nombre} - ${parseFloat(prod.precio).toLocaleString('es-CO')}</option>`;
-                    });
-                    console.log('Productos cargados:', data.productos.length);
-                } else {
-                    console.error('Error al cargar productos:', data);
-                    alert('Error al cargar productos. Revisa la consola para más detalles.');
-                }
-            } catch (error) {
-                console.error('Error en cargarProductos():', error);
-                alert('Error de conexión al cargar productos');
-            }
+        async function refreshAll() {
+            const [sellers, products, dashboard] = await Promise.all([
+                api('listar_vendedores'),
+                api('listar_productos'),
+                api('dashboard')
+            ]);
+            state.sellers = sellers.sellers;
+            state.products = products.products;
+            state.dashboard = dashboard.dashboard;
+            renderSellers();
+            await loadClients();
+            await loadStock();
+            renderDashboard();
         }
 
-        // ========== FUNCIONES DE VENTA ==========
-        async function buscarClienteVenta() {
-            const cedula = document.getElementById('cedulaVenta').value.trim();
-            if (!cedula) {
-                alert('Ingrese una cédula');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'buscar_cliente');
-            formData.append('cedula', cedula);
-
-            try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    clienteActualVenta = data.cliente;
-                    mostrarClienteVenta(data.cliente);
-                    document.getElementById('clienteNoEncontrado').style.display = 'none';
-                } else {
-                    document.getElementById('clienteVentaInfo').style.display = 'none';
-                    document.getElementById('clienteNoEncontrado').style.display = 'block';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al buscar cliente');
-            }
+        async function loadClients() {
+            const sellerId = document.getElementById('sellerFilter').value || '';
+            const data = await api(`listar_clientes${sellerId ? '&seller_id=' + sellerId : ''}`);
+            state.clients = data.clients;
+            renderClients();
+            renderClientSelects();
         }
 
-        function mostrarClienteVenta(cliente) {
-            document.getElementById('clienteVentaNombre').textContent = cliente.nombres;
-            document.getElementById('clienteVentaDireccion').textContent = cliente.direccion;
-            document.getElementById('clienteVentaSaldo').textContent = '$' + parseFloat(cliente.saldo_actual).toLocaleString('es-CO');
-            document.getElementById('clienteVentaInfo').style.display = 'block';
-            productosVenta = [];
-            actualizarListaProductosVenta();
+        async function loadStock() {
+            const sellerId = document.getElementById('sellerFilter').value || '';
+            const data = await api(`listar_stock${sellerId ? '&seller_id=' + sellerId : ''}`);
+            state.stock = data.stock;
+            renderStock();
         }
 
-        function agregarProducto() {
-            const select = document.getElementById('productoSelect');
-            const cantidad = parseInt(document.getElementById('cantidadProducto').value);
-            
-            if (!select.value) {
-                alert('Seleccione un producto');
-                return;
-            }
-
-            const option = select.options[select.selectedIndex];
-            const producto = {
-                id: select.value,
-                nombre: option.text.split(' - ')[0],
-                precio: parseFloat(option.dataset.precio),
-                cantidad: cantidad,
-                subtotal: parseFloat(option.dataset.precio) * cantidad
-            };
-
-            productosVenta.push(producto);
-            actualizarListaProductosVenta();
-            
-            select.value = '';
-            document.getElementById('cantidadProducto').value = 1;
-        }
-
-        function actualizarListaProductosVenta() {
-            const lista = document.getElementById('listaProductosVenta');
-            
-            if (productosVenta.length === 0) {
-                lista.innerHTML = '<p class="text-muted">No hay productos agregados</p>';
-                document.getElementById('totalVenta').style.display = 'none';
-                document.getElementById('btnGuardarVenta').style.display = 'none';
-                return;
-            }
-
-            let html = '<h6>Productos:</h6>';
-            let total = 0;
-
-            productosVenta.forEach((prod, index) => {
-                total += prod.subtotal;
-                html += `
-                    <div class="producto-item">
-                        <div>
-                            <strong>${prod.nombre}</strong><br>
-                            <small>${prod.cantidad} x $${prod.precio.toLocaleString('es-CO')} = $${prod.subtotal.toLocaleString('es-CO')}</small>
-                        </div>
-                        <button class="btn btn-danger btn-sm" onclick="eliminarProducto(${index})">
-                            <i class="bi bi-trash"></i>
-                        </button>
-                    </div>
-                `;
+        function renderSellers() {
+            const selects = ['sellerFilter', 'clientSeller', 'stockSeller', 'reportSeller'];
+            selects.forEach(id => {
+                const el = document.getElementById(id);
+                const current = el.value;
+                el.innerHTML = id === 'sellerFilter' ? '<option value="">Todos</option>' : '';
+                state.sellers.forEach(s => el.innerHTML += `<option value="${s.id}">${s.name}</option>`);
+                if ([...el.options].some(o => o.value === current)) el.value = current;
             });
 
-            lista.innerHTML = html;
-
-            const saldoActual = parseFloat(clienteActualVenta.saldo_actual);
-            const nuevoSaldo = saldoActual + total;
-
-            document.getElementById('totalVentaMonto').textContent = total.toLocaleString('es-CO');
-            document.getElementById('nuevoSaldoVenta').textContent = nuevoSaldo.toLocaleString('es-CO');
-            document.getElementById('totalVenta').style.display = 'block';
-            document.getElementById('btnGuardarVenta').style.display = 'block';
+            renderProductSelects();
         }
 
-        function eliminarProducto(index) {
-            productosVenta.splice(index, 1);
-            actualizarListaProductosVenta();
-        }
-
-        async function guardarVenta() {
-            if (productosVenta.length === 0) {
-                alert('Agregue al menos un producto');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'crear_venta');
-            formData.append('cliente_id', clienteActualVenta.id);
-            formData.append('productos', JSON.stringify(productosVenta));
-
-            try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
+        function renderProductSelects() {
+            ['saleProduct', 'stockProduct'].forEach(id => {
+                const el = document.getElementById(id);
+                el.innerHTML = '';
+                state.products.forEach(p => {
+                    el.innerHTML += `<option value="${p.id}">${p.name} - ${money(p.sale_price)}</option>`;
                 });
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('✅ Venta registrada exitosamente');
-                    clienteActualVenta.saldo_actual = data.saldo_nuevo;
-                    productosVenta = [];
-                    actualizarListaProductosVenta();
-                    mostrarClienteVenta(clienteActualVenta);
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al guardar venta');
-            }
+            });
         }
 
-        // ========== FUNCIONES DE PAGO ==========
-        async function buscarClientePago() {
-            const cedula = document.getElementById('cedulaPago').value.trim();
-            if (!cedula) {
-                alert('Ingrese una cédula');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'buscar_cliente');
-            formData.append('cedula', cedula);
-
-            try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
+        function renderClientSelects() {
+            ['saleClient', 'paymentClient'].forEach(id => {
+                const el = document.getElementById(id);
+                el.innerHTML = '';
+                state.clients.forEach(c => {
+                    el.innerHTML += `<option value="${c.id}">${c.name} - saldo ${money(c.current_balance)}</option>`;
                 });
-                const data = await response.json();
-
-                if (data.success) {
-                    clienteActualPago = data.cliente;
-                    document.getElementById('clientePagoNombre').textContent = data.cliente.nombres;
-                    document.getElementById('clientePagoSaldo').textContent = '$' + parseFloat(data.cliente.saldo_actual).toLocaleString('es-CO');
-                    document.getElementById('clientePagoInfo').style.display = 'block';
-                    document.getElementById('montoPago').value = '';
-                    document.getElementById('resultadoPago').style.display = 'none';
-                } else {
-                    alert('Cliente no encontrado');
-                    document.getElementById('clientePagoInfo').style.display = 'none';
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al buscar cliente');
-            }
+            });
+            syncSelectedClient('sale');
+            syncSelectedClient('payment');
         }
 
-        async function guardarPago() {
-            const monto = parseFloat(document.getElementById('montoPago').value);
-            
-            if (!monto || monto <= 0) {
-                alert('Ingrese un monto válido');
-                return;
-            }
+        function renderDashboard() {
+            const d = state.dashboard || {};
+            document.getElementById('metricCartera').textContent = money(d.cartera_total);
+            document.getElementById('metricRecaudo').textContent = money(d.recaudo_hoy);
+            document.getElementById('metricEfectivo').textContent = money(d.efectivo_hoy);
+            document.getElementById('metricNequi').textContent = money(d.nequi_hoy);
+            document.getElementById('metricProduccion').textContent = money(d.produccion_hoy);
+            document.getElementById('metricInversion').textContent = money(d.inversion_hoy);
 
-            const formData = new FormData();
-            formData.append('action', 'registrar_pago');
-            formData.append('cliente_id', clienteActualPago.id);
-            formData.append('monto', monto);
+            const balances = state.clients.filter(c => Number(c.current_balance) > 0);
+            document.getElementById('homeBalances').innerHTML = balances.length ? balances.map(clientCard).join('') : empty('Sin saldos pendientes');
+            document.getElementById('collectList').innerHTML = balances.length ? balances.map(clientCard).join('') : empty('No hay clientes por cobrar');
+            document.getElementById('sellerPerformance').innerHTML = (d.vendedores || []).map(s => `
+                <article class="item">
+                    <div><strong>${s.name}</strong><span>Cartera ${money(s.cartera)}</span></div>
+                    <div class="right"><strong>${money(s.recaudo_hoy)}</strong><span>${money(s.efectivo_hoy)} efec. / ${money(s.nequi_hoy)} Nequi</span></div>
+                </article>
+            `).join('') || empty('Sin vendedores');
+        }
 
+        function renderClients() {
+            const q = document.getElementById('clientSearch')?.value?.toLowerCase() || '';
+            const filtered = state.clients.filter(c =>
+                c.name.toLowerCase().includes(q) ||
+                c.phone?.toLowerCase().includes(q) ||
+                c.address.toLowerCase().includes(q)
+            );
+            document.getElementById('clientsList').innerHTML = filtered.length ? filtered.map(clientCard).join('') : empty('Sin clientes');
+        }
+
+        function renderStock() {
+            document.getElementById('stockList').innerHTML = state.stock.length ? state.stock.map(row => `
+                <article class="item">
+                    <div><strong>${row.product_name}</strong><span>${row.seller_name}</span></div>
+                    <div class="right"><strong>${row.quantity}</strong><span>${money(row.sale_price)} PVP</span></div>
+                </article>
+            `).join('') : empty('Sin stock asignado');
+        }
+
+        function clientCard(c) {
+            return `
+                <article class="item clickable" onclick="openHistory(${c.id})">
+                    <div><strong>${c.name}</strong><span>${c.address}</span><span>${c.seller_name || ''}</span></div>
+                    <div class="right"><strong>${money(c.current_balance)}</strong><span>${c.phone || 'Sin telefono'}</span></div>
+                </article>
+            `;
+        }
+
+        function empty(text) {
+            return `<div class="empty">${text}</div>`;
+        }
+
+        function showView(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === id));
+            document.getElementById('viewTitle').textContent = document.querySelector(`[data-view="${id}"] span`).textContent;
+        }
+
+        async function onSellerChange() {
+            await loadClients();
+            await loadStock();
+            renderDashboard();
+        }
+
+        async function createSeller(event) {
+            event.preventDefault();
+            const fd = new FormData();
+            fd.append('name', document.getElementById('sellerName').value);
+            fd.append('phone', document.getElementById('sellerPhone').value);
+            await post('crear_vendedor', fd, event.target);
+            await refreshAll();
+        }
+
+        async function createClient(event) {
+            event.preventDefault();
+            const fd = new FormData();
+            fd.append('seller_id', document.getElementById('clientSeller').value);
+            fd.append('name', document.getElementById('clientName').value);
+            fd.append('address', document.getElementById('clientAddress').value);
+            fd.append('phone', document.getElementById('clientPhone').value);
+            await post('crear_cliente', fd, event.target);
+            await refreshAll();
+        }
+
+        async function createProduct(event) {
+            event.preventDefault();
+            const fd = new FormData();
+            fd.append('name', document.getElementById('productName').value);
+            fd.append('investment_cost', document.getElementById('productCost').value);
+            fd.append('sale_price', document.getElementById('productPrice').value);
+            await post('crear_producto', fd, event.target);
+            await refreshAll();
+        }
+
+        async function deliverStock(event) {
+            event.preventDefault();
+            const fd = new FormData();
+            fd.append('seller_id', document.getElementById('stockSeller').value);
+            fd.append('product_id', document.getElementById('stockProduct').value);
+            fd.append('quantity', document.getElementById('stockQty').value);
+            await post('entregar_stock', fd, event.target);
+            await refreshAll();
+        }
+
+        function addSaleItem() {
+            const productId = document.getElementById('saleProduct').value;
+            const qty = Number(document.getElementById('saleQty').value || 1);
+            const product = state.products.find(p => String(p.id) === String(productId));
+            if (!product || qty <= 0) return;
+            state.saleItems.push({ product_id: product.id, quantity: qty, name: product.name, sale_price: product.sale_price });
+            renderSaleItems();
+        }
+
+        function renderSaleItems() {
+            document.getElementById('saleItems').innerHTML = state.saleItems.map((item, index) => `
+                <article class="cart-item">
+                    <span>${item.quantity} x ${item.name}</span>
+                    <strong>${money(Number(item.sale_price) * item.quantity)}</strong>
+                    <button type="button" class="mini-button" onclick="removeSaleItem(${index})"><i class="bi bi-x"></i></button>
+                </article>
+            `).join('');
+            updateSalePreview();
+        }
+
+        function removeSaleItem(index) {
+            state.saleItems.splice(index, 1);
+            renderSaleItems();
+        }
+
+        async function registerVisit(event, mode) {
+            event.preventDefault();
+            const clientSelect = mode === 'venta' ? document.getElementById('saleClient') : document.getElementById('paymentClient');
+            const client = state.clients.find(c => String(c.id) === String(clientSelect.value));
+            if (!client) return;
+
+            const fd = new FormData();
+            fd.append('client_id', client.id);
+            fd.append('seller_id', client.seller_id);
+            fd.append('items', mode === 'venta' ? JSON.stringify(state.saleItems) : '[]');
+            fd.append('payment_amount', mode === 'cobro' ? document.getElementById('paymentAmount').value : 0);
+            fd.append('payment_method', mode === 'cobro' ? document.getElementById('paymentMethod').value : '');
+            await post('registrar_visita', fd, event.target);
+            state.saleItems = [];
+            renderSaleItems();
+            document.getElementById('paymentAmount').value = '';
+            await refreshAll();
+            showView('inicio');
+        }
+
+        async function post(action, body, form) {
             try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('✅ Pago registrado exitosamente');
-                    document.getElementById('nuevoSaldoPago').textContent = data.saldo_nuevo.toLocaleString('es-CO');
-                    document.getElementById('resultadoPago').style.display = 'block';
-                    clienteActualPago.saldo_actual = data.saldo_nuevo;
-                    document.getElementById('clientePagoSaldo').textContent = '$' + data.saldo_nuevo.toLocaleString('es-CO');
-                    document.getElementById('montoPago').value = '';
-                } else {
-                    alert('Error: ' + data.message);
-                }
+                await api(action, { method: 'POST', body });
+                form?.reset();
+                toast('Guardado correctamente');
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error al registrar pago');
+                toast(error.message, true);
             }
         }
 
-        // ========== FUNCIONES DE CLIENTES ==========
-        function mostrarFormularioCliente() {
-            document.getElementById('formNuevoCliente').style.display = 'block';
-            document.getElementById('cedulaNuevoCliente').value = '';
-            document.getElementById('nombresNuevoCliente').value = '';
-            document.getElementById('direccionNuevoCliente').value = '';
+        function syncSelectedClient(type) {
+            const select = document.getElementById(type === 'sale' ? 'saleClient' : 'paymentClient');
+            const client = state.clients.find(c => String(c.id) === String(select.value));
+            const text = type === 'sale' ? 'Saldo anterior: ' : 'Saldo actual: ';
+            document.getElementById(type === 'sale' ? 'saleBalance' : 'paymentBalance').textContent = text + money(client?.current_balance);
+            if (type === 'sale') updateSalePreview();
+            if (type === 'payment') updatePaymentPreview();
         }
 
-        function ocultarFormularioCliente() {
-            document.getElementById('formNuevoCliente').style.display = 'none';
+        function updateSalePreview() {
+            const client = state.clients.find(c => String(c.id) === String(document.getElementById('saleClient').value));
+            const previous = Number(client?.current_balance || 0);
+            const newProducts = state.saleItems.reduce((sum, item) => sum + Number(item.sale_price) * item.quantity, 0);
+            document.getElementById('calcPrev').textContent = money(previous);
+            document.getElementById('calcNew').textContent = money(newProducts);
+            document.getElementById('calcPay').textContent = money(0);
+            document.getElementById('calcBalance').textContent = money(previous + newProducts);
         }
 
-        async function crearNuevoCliente() {
-            const cedula = document.getElementById('cedulaNuevoCliente').value.trim();
-            const nombres = document.getElementById('nombresNuevoCliente').value.trim();
-            const direccion = document.getElementById('direccionNuevoCliente').value.trim();
+        function updatePaymentPreview() {
+            const client = state.clients.find(c => String(c.id) === String(document.getElementById('paymentClient').value));
+            const amount = Number(document.getElementById('paymentAmount').value || 0);
+            document.getElementById('paymentBalance').textContent = `Saldo actual: ${money(client?.current_balance)} | Nuevo saldo: ${money(Number(client?.current_balance || 0) - amount)}`;
+        }
 
-            if (!cedula || !nombres || !direccion) {
-                alert('⚠️ Complete todos los campos');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'crear_cliente');
-            formData.append('cedula', cedula);
-            formData.append('nombres', nombres);
-            formData.append('direccion', direccion);
-
+        async function openHistory(clientId) {
             try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('✅ Cliente creado exitosamente');
-                    ocultarFormularioCliente();
-                    cargarClientes();
-                } else {
-                    alert('Error: ' + data.message);
-                }
+                const data = await api(`historial_cliente&client_id=${clientId}`);
+                const client = state.clients.find(c => String(c.id) === String(clientId));
+                const lines = data.visits.map(v => {
+                    const items = v.items.map(i => `${i.quantity} x ${i.product_name}`).join(', ') || 'Sin productos';
+                    return `${new Date(v.visit_date).toLocaleString('es-CO')}\nProductos: ${items}\nAnterior ${money(v.previous_balance)} + Nuevo ${money(v.new_products_total)} - Abono ${money(v.payment_amount)} = ${money(v.new_balance)}`;
+                }).join('\n\n');
+                alert(`${client?.name || 'Cliente'}\n\n${lines || 'Sin historial'}`);
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error al crear cliente');
+                toast(error.message, true);
             }
         }
 
-        async function cargarClientes() {
+        async function loadSellerReport() {
             try {
-                const response = await fetch('api.php?action=listar_clientes');
-                const data = await response.json();
-
-                if (data.success) {
-                    const lista = document.getElementById('listaClientes');
-                    
-                    if (data.clientes.length === 0) {
-                        lista.innerHTML = '<p class="text-muted text-center">No hay clientes registrados</p>';
-                        return;
-                    }
-
-                    let html = '';
-                    data.clientes.forEach(cliente => {
-                        const saldoClass = parseFloat(cliente.saldo_actual) > 0 ? 'danger' : 'success';
-                        html += `
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-start">
-                                        <div>
-                                            <h6 class="mb-1">${cliente.nombres}</h6>
-                                            <p class="mb-1"><small><i class="bi bi-credit-card"></i> ${cliente.cedula}</small></p>
-                                            <p class="mb-1"><small><i class="bi bi-geo-alt"></i> ${cliente.direccion}</small></p>
-                                            <span class="badge bg-${saldoClass}">Saldo: $${parseFloat(cliente.saldo_actual).toLocaleString('es-CO')}</span>
-                                        </div>
-                                        <button class="btn btn-sm btn-primary" onclick="verHistorial(${cliente.id})">
-                                            <i class="bi bi-clock-history"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    lista.innerHTML = html;
-                }
+                const sellerId = document.getElementById('reportSeller').value;
+                const date = document.getElementById('reportDate').value;
+                const data = await api(`reporte_vendedor&seller_id=${sellerId}&date=${date}`);
+                const r = data.report;
+                document.getElementById('sellerReport').innerHTML = `
+                    <div class="formula compact-formula">
+                        <div><span>Recaudado</span><strong>${money(r.recaudo_total)}</strong></div>
+                        <div><span>Efectivo</span><strong>${money(r.recaudo_efectivo)}</strong></div>
+                        <div><span>Nequi</span><strong>${money(r.recaudo_nequi)}</strong></div>
+                        <div><span>Inversion</span><strong>${money(r.inversion)}</strong></div>
+                        <div><span>Produccion PVP</span><strong>${money(r.produccion_pvp)}</strong></div>
+                        <div class="total"><span>Utilidad estimada</span><strong>${money(r.utilidad_bruta_estimada)}</strong></div>
+                    </div>
+                    <div class="list">${r.visitas.map(v => `
+                        <article class="item">
+                            <div><strong>${v.client_name}</strong><span>${new Date(v.visit_date).toLocaleTimeString('es-CO')}</span></div>
+                            <div class="right"><strong>${money(v.new_balance)}</strong><span>Abono ${money(v.payment_amount)}</span></div>
+                        </article>
+                    `).join('') || empty('Sin visitas')}</div>
+                `;
             } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar clientes');
+                toast(error.message, true);
             }
         }
 
-        // ========== FUNCIONES DE PRODUCTOS ==========
-        function mostrarFormularioProducto() {
-            document.getElementById('formNuevoProducto').style.display = 'block';
-            document.getElementById('nombreNuevoProducto').value = '';
-            document.getElementById('precioNuevoProducto').value = '';
-        }
-
-        function ocultarFormularioProducto() {
-            document.getElementById('formNuevoProducto').style.display = 'none';
-        }
-
-        async function crearNuevoProducto() {
-            const nombre = document.getElementById('nombreNuevoProducto').value.trim();
-            const precio = parseFloat(document.getElementById('precioNuevoProducto').value);
-
-            if (!nombre || !precio || precio <= 0) {
-                alert('⚠️ Complete todos los campos correctamente');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('action', 'crear_producto');
-            formData.append('nombre', nombre);
-            formData.append('precio', precio);
-
-            try {
-                const response = await fetch('api.php', {
-                    method: 'POST',
-                    body: formData
-                });
-                const data = await response.json();
-
-                if (data.success) {
-                    alert('✅ Producto creado exitosamente');
-                    ocultarFormularioProducto();
-                    cargarProductosLista();
-                    cargarProductos(); // Recargar select de productos
-                } else {
-                    alert('Error: ' + data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al crear producto');
-            }
-        }
-
-        async function cargarProductosLista() {
-            try {
-                const response = await fetch('api.php?action=listar_productos');
-                const data = await response.json();
-
-                if (data.success) {
-                    const lista = document.getElementById('listaProductos');
-                    
-                    if (data.productos.length === 0) {
-                        lista.innerHTML = '<p class="text-muted text-center">No hay productos registrados</p>';
-                        return;
-                    }
-
-                    let html = '';
-                    data.productos.forEach(producto => {
-                        html += `
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <h6 class="mb-1">${producto.nombre}</h6>
-                                            <span class="badge bg-success">${parseFloat(producto.precio).toLocaleString('es-CO')}</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-                    });
-                    lista.innerHTML = html;
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar productos');
-            }
-        }
-
-        // ========== FUNCIONES DE HISTORIAL ==========
-        async function verHistorial(clienteId) {
-            try {
-                const response = await fetch(`api.php?action=obtener_historial&cliente_id=${clienteId}`);
-                const data = await response.json();
-
-                if (data.success) {
-                    let ventasHtml = '';
-                    if (data.ventas.length === 0) {
-                        ventasHtml = '<p class="text-muted">No hay ventas registradas</p>';
-                    } else {
-                        data.ventas.forEach(venta => {
-                            ventasHtml += `
-                                <div class="historial-item historial-venta">
-                                    <strong>${new Date(venta.fecha).toLocaleString('es-CO')}</strong><br>
-                                    <small>${venta.productos}</small><br>
-                                    <span class="badge bg-danger">Total: ${parseFloat(venta.total).toLocaleString('es-CO')}</span>
-                                    <small class="text-muted d-block mt-1">Saldo: ${parseFloat(venta.saldo_anterior).toLocaleString('es-CO')} → ${parseFloat(venta.saldo_nuevo).toLocaleString('es-CO')}</small>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    let pagosHtml = '';
-                    if (data.pagos.length === 0) {
-                        pagosHtml = '<p class="text-muted">No hay pagos registrados</p>';
-                    } else {
-                        data.pagos.forEach(pago => {
-                            pagosHtml += `
-                                <div class="historial-item historial-pago">
-                                    <strong>${new Date(pago.fecha).toLocaleString('es-CO')}</strong><br>
-                                    <span class="badge bg-success">Pago: ${parseFloat(pago.monto).toLocaleString('es-CO')}</span>
-                                    <small class="text-muted d-block mt-1">Saldo: ${parseFloat(pago.saldo_anterior).toLocaleString('es-CO')} → ${parseFloat(pago.saldo_nuevo).toLocaleString('es-CO')}</small>
-                                </div>
-                            `;
-                        });
-                    }
-
-                    document.getElementById('historialVentas').innerHTML = ventasHtml;
-                    document.getElementById('historialPagos').innerHTML = pagosHtml;
-
-                    const modal = new bootstrap.Modal(document.getElementById('modalHistorial'));
-                    modal.show();
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al cargar historial');
-            }
+        function toast(message, error = false) {
+            const el = document.getElementById('toast');
+            el.textContent = message;
+            el.className = `toast show ${error ? 'error' : ''}`;
+            setTimeout(() => el.className = 'toast', 2600);
         }
     </script>
 </body>
